@@ -92,36 +92,3 @@ def health():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
-```
-
-**4. Commit changes: "Update to latest yt-dlp with iOS client"**
-
----
-
-## ⏱️ **WAIT FOR RAILWAY REDEPLOY**
-
-Railway will auto-rebuild (3-5 minutes):
-- Building...
-- Deploying...
-- Active! ✅
-
----
-
-## 🧪 **TEST IT**
-
-Once Railway shows "Active":
-
-**1. Go to n8n**
-
-**2. Make sure "Download Audio" node has:**
-```
-Method: POST
-URL: https://soundscape-audio-api-production.up.railway.app/download
-
-Body (JSON):
-{
-  "url": "{{ $json.output.Selected[0].url }}"
-}
-
-Response Format: File
-Put Output in Field: data
