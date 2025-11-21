@@ -82,4 +82,25 @@ def download_audio():
         file_size = os.path.getsize(audio_file)
         if file_size == 0:
             logger.error("Audio file is empty")
-            return jsonify({'error': 'Audi
+            return jsonify({'error': 'Audio file is empty'}), 500
+            
+        logger.info(f"Sending file: {audio_file} ({file_size} bytes)")
+        
+        return send_file(
+            audio_file,
+            mimetype='audio/mpeg',
+            as_attachment=True,
+            download_name='audio.mp3'
+        )
+    
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({'status': 'ok', 'service': 'audio-converter', 'version': 'nuclear'})
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
