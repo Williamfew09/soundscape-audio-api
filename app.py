@@ -17,9 +17,11 @@ def download_audio():
         if not video_url:
             return jsonify({'error': 'No URL provided'}), 400
         
+        # Create temp directory
         temp_dir = tempfile.mkdtemp()
         output_template = os.path.join(temp_dir, 'audio.%(ext)s')
         
+        # Enhanced yt-dlp options to avoid 403 errors
         ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': output_template,
@@ -30,11 +32,18 @@ def download_audio():
             }],
             'quiet': True,
             'no_warnings': True,
+            # Add these to avoid YouTube blocking
+            'cookiefile': None,
+            'extract_flat': False,
+            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'referer': 'https://www.youtube.com/',
+            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
         }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            ydl.extract_info(video_url, download=True)
+            info = ydl.extract_info(video_url, download=True)
             
+        # Find the output file
         audio_file = os.path.join(temp_dir, 'audio.mp3')
         
         if not os.path.exists(audio_file):
